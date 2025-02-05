@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fsnotify/fsnotify/polling"
 	"math"
 	"sync"
 	"time"
@@ -20,7 +21,7 @@ func dedup(paths ...string) {
 	}
 
 	// Create a new watcher.
-	w, err := fsnotify.NewWatcher()
+	w, err := polling.NewWatcher()
 	if err != nil {
 		exit("creating a new watcher: %s", err)
 	}
@@ -41,7 +42,7 @@ func dedup(paths ...string) {
 	<-make(chan struct{}) // Block forever
 }
 
-func dedupLoop(w *fsnotify.Watcher) {
+func dedupLoop(w *polling.Watcher) {
 	var (
 		// Wait 100ms for new events; each new event resets the timer.
 		waitFor = 100 * time.Millisecond

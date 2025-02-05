@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/fsnotify/fsnotify/polling"
 	"os"
 	"path/filepath"
-
-	"github.com/fsnotify/fsnotify"
 )
 
 // Watch one or more files, but instead of watching the file directly it watches
@@ -16,7 +15,7 @@ func file(files ...string) {
 	}
 
 	// Create a new watcher.
-	w, err := fsnotify.NewWatcher()
+	w, err := polling.NewWatcher()
 	if err != nil {
 		exit("creating a new watcher: %s", err)
 	}
@@ -47,7 +46,7 @@ func file(files ...string) {
 	<-make(chan struct{}) // Block forever
 }
 
-func fileLoop(w *fsnotify.Watcher, files []string) {
+func fileLoop(w *polling.Watcher, files []string) {
 	i := 0
 	for {
 		select {

@@ -2,6 +2,7 @@ package fsnotify
 
 import (
 	"fmt"
+	"github.com/fsnotify/fsnotify/polling"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -40,17 +41,17 @@ var testBuffered = func() uint {
 }()
 
 // newWatcher initializes an fsnotify Watcher instance.
-func newWatcher(t *testing.T, add ...string) *Watcher {
+func newWatcher(t *testing.T, add ...string) *polling.Watcher {
 	t.Helper()
 
 	var (
-		w   *Watcher
+		w   *polling.Watcher
 		err error
 	)
 	if testBuffered > 0 {
 		w, err = NewBufferedWatcher(testBuffered)
 	} else {
-		w, err = NewWatcher()
+		w, err = polling.NewWatcher()
 	}
 	if err != nil {
 		t.Fatalf("newWatcher: %s", err)
@@ -65,7 +66,7 @@ func newWatcher(t *testing.T, add ...string) *Watcher {
 }
 
 // addWatch adds a watch for a directory
-func addWatch(t *testing.T, w *Watcher, path ...string) {
+func addWatch(t *testing.T, w *polling.Watcher, path ...string) {
 	t.Helper()
 	if len(path) < 1 {
 		t.Fatalf("addWatch: path must have at least one element: %s", path)
@@ -77,7 +78,7 @@ func addWatch(t *testing.T, w *Watcher, path ...string) {
 }
 
 // rmWatch removes a watch.
-func rmWatch(t *testing.T, watcher *Watcher, path ...string) {
+func rmWatch(t *testing.T, watcher *polling.Watcher, path ...string) {
 	t.Helper()
 	if len(path) < 1 {
 		t.Fatalf("rmWatch: path must have at least one element: %s", path)
@@ -371,7 +372,7 @@ func chmod(t *testing.T, mode fs.FileMode, path ...string) {
 //
 // events := w.stop(t)
 type eventCollector struct {
-	w    *Watcher
+	w    *polling.Watcher
 	e    Events
 	mu   sync.Mutex
 	done chan struct{}

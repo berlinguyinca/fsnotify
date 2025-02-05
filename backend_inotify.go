@@ -5,6 +5,7 @@ package fsnotify
 import (
 	"errors"
 	"fmt"
+	"github.com/berlinguyinca/fsnotify/internal"
 	"io"
 	"io/fs"
 	"os"
@@ -14,7 +15,6 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/fsnotify/fsnotify/internal"
 	"golang.org/x/sys/unix"
 )
 

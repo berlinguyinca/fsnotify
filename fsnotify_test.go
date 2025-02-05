@@ -3,6 +3,7 @@ package fsnotify
 import (
 	"errors"
 	"fmt"
+	"github.com/fsnotify/fsnotify/polling"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -181,7 +182,7 @@ func TestWatchRemoveWatchedDir(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	chanClosed := func(t *testing.T, w *Watcher) {
+	chanClosed := func(t *testing.T, w *polling.Watcher) {
 		t.Helper()
 
 		// Need a small sleep as Close() on kqueue does all sorts of things,
@@ -317,7 +318,7 @@ func TestClose(t *testing.T) {
 			t.Parallel()
 
 			for i := 0; i < 150; i++ {
-				w, err := NewWatcher()
+				w, err := polling.NewWatcher()
 				if err != nil {
 					if strings.Contains(err.Error(), "too many") { // syscall.EMFILE
 						time.Sleep(100 * time.Millisecond)
@@ -702,7 +703,7 @@ func TestOpHas(t *testing.T) {
 }
 
 func BenchmarkWatch(b *testing.B) {
-	do := func(b *testing.B, w *Watcher) {
+	do := func(b *testing.B, w *polling.Watcher) {
 		tmp := b.TempDir()
 		file := join(tmp, "file")
 		err := w.Add(tmp)
@@ -749,7 +750,7 @@ func BenchmarkWatch(b *testing.B) {
 	}
 
 	b.Run("default", func(b *testing.B) {
-		w, err := NewWatcher()
+		w, err := polling.NewWatcher()
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -779,7 +780,7 @@ func BenchmarkWatch(b *testing.B) {
 }
 
 func BenchmarkAddRemove(b *testing.B) {
-	do := func(b *testing.B, w *Watcher) {
+	do := func(b *testing.B, w *polling.Watcher) {
 		tmp := b.TempDir()
 		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
@@ -793,7 +794,7 @@ func BenchmarkAddRemove(b *testing.B) {
 	}
 
 	b.Run("default", func(b *testing.B) {
-		w, err := NewWatcher()
+		w, err := polling.NewWatcher()
 		if err != nil {
 			b.Fatal(err)
 		}
